@@ -52,6 +52,9 @@ class Worker(QtCore.QObject):
 
         self.allow_debug()
 
+        print("self.name", self.name)
+        print("worker_name", task["worker_name"])
+
         if ('worker_name' in task and task['worker_name'] == self.name) or \
             ('worker_name' not in task and self.name is None):
 

@@ -1731,21 +1731,25 @@ class App(QtCore.QObject):
         App.log.debug("on_fileopengerber()")
 
         try:
-            filename = QFileDialog.getOpenFileName(caption="Open Gerber",
+            filename, _ = QFileDialog.getOpenFileName(caption="Open Gerber",
                                                          directory=self.get_last_folder())
         except TypeError:
-            filename = QFileDialog.getOpenFileName(caption="Open Gerber")
+            filename, _ = QFileDialog.getOpenFileName(caption="Open Gerber")
 
         # The Qt methods above will return a QString which can cause problems later.
         # So far json.dump() will fail to serialize it.
         # TODO: Improve the serialization methods and remove this fix.
+
+        # import ipdb; ipdb.set_trace();
+
         filename = str(filename)
 
         if filename == "":
             self.inform.emit("Open cancelled.")
         else:
             self.worker_task.emit({'fcn': self.open_gerber,
-                                   'params': [filename]})
+                                   'params': [filename],
+                                   'worker_name' : 'worker2'})
 
     def on_fileopenexcellon(self):
         """
@@ -2063,6 +2067,7 @@ class App(QtCore.QObject):
             # Opening the file happens here
             self.progress.emit(30)
             try:
+                print("hello??", filename)
                 gerber_obj.parse_file(filename, follow=follow)
 
             except IOError:
@@ -4203,7 +4208,7 @@ class App(QtCore.QObject):
         }
 
         openers = {
-            'gerber': lambda fname: self.worker_task.emit({'fcn': self.open_gerber, 'params': [fname]}),
+            'gerber': lambda fname: self.worker_task.emit({'fcn': self.open_gerber, 'params': [fname], 'worker_name' : 'worker2'}),
             'excellon': lambda fname: self.worker_task.emit({'fcn': self.open_excellon, 'params': [fname]}),
             'cncjob': lambda fname: self.worker_task.emit({'fcn': self.open_gcode, 'params': [fname]}),
             'project': self.open_project,
