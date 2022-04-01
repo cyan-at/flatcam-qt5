@@ -18,10 +18,14 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 import FlatCAMApp
 import logging
 
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
 log = logging.getLogger('base')
 
 
-class CanvasCache(QtCore.QObject):
+class CanvasCache(QObject):
     """
 
     Case story #1:
@@ -40,7 +44,7 @@ class CanvasCache(QtCore.QObject):
 
     # Signals:
     # A bitmap is ready to be displayed.
-    new_screen = QtCore.pyqtSignal()
+    new_screen = pyqtSignal()
 
     def __init__(self, plotcanvas, app, dpi=50):
 
@@ -98,7 +102,7 @@ class CanvasCache(QtCore.QObject):
         log.debug("A new object is available. Should plot it!")
 
 
-class PlotCanvas(QtCore.QObject):
+class PlotCanvas(QObject):
     """
     Class handling the plotting area in the application.
     """
@@ -106,7 +110,7 @@ class PlotCanvas(QtCore.QObject):
     # Signals:
     # Request for new bitmap to display. The parameter
     # is a list with [xmin, xmax, ymin, ymax, zoom(optional)]
-    update_screen_request = QtCore.pyqtSignal(list)
+    update_screen_request = pyqtSignal(list)
 
     def __init__(self, container, app):
         """
@@ -143,7 +147,7 @@ class PlotCanvas(QtCore.QObject):
 
         # The canvas is the top level container (FigureCanvasQTAgg)
         self.canvas = FigureCanvas(self.figure)
-        # self.canvas.setFocusPolicy(QtCore.Qt.ClickFocus)
+        # self.canvas.setFocusPolicy(Qt.ClickFocus)
         # self.canvas.setFocus()
 
         #self.canvas.set_hexpand(1)
@@ -160,9 +164,10 @@ class PlotCanvas(QtCore.QObject):
 
         ### Bitmap Cache
         self.cache = CanvasCache(self, self.app)
-        self.cache_thread = QtCore.QThread()
+        self.cache_thread = QThread()
         self.cache.moveToThread(self.cache_thread)
-        super(PlotCanvas, self).connect(self.cache_thread, QtCore.SIGNAL("started()"), self.cache.run)
+        # QObject.connect(self.cache_thread, SIGNAL("started()"), self.cache.run)
+        self.cache_thread.started.connect(self.start_cache)
         # self.connect()
         self.cache_thread.start()
         self.cache.new_screen.connect(self.on_new_screen)
@@ -185,6 +190,9 @@ class PlotCanvas(QtCore.QObject):
 
         self.pan_axes = []
         self.panning = False
+
+    def start_cache(self):
+        self.cache.run
 
     def on_new_screen(self):
 

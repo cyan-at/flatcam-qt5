@@ -216,9 +216,7 @@ class App(QtCore.QObject):
         QtCore.QObject.__init__(self)
 
         self.ui = FlatCAMGUI(self.version, name=self.version_name)
-        self.connect(self.ui,
-                     QtCore.SIGNAL("geomUpdate(int, int, int, int)"),
-                     self.save_geometry)
+        self.ui.geomUpdate.connect(self.save_geometry)
 
         #### Plot Area ####
         # self.plotcanvas = PlotCanvas(self.ui.splitter)
@@ -490,7 +488,7 @@ class App(QtCore.QObject):
         self.worker = Worker(self)
         self.thr1 = QtCore.QThread()
         self.worker.moveToThread(self.thr1)
-        self.connect(self.thr1, QtCore.SIGNAL("started()"), self.worker.run)
+        # self.connect(self.thr1, QtCore.SIGNAL("started()"), self.worker.run)
         self.thr1.start()
 
         #### Check for updates ####
@@ -500,11 +498,15 @@ class App(QtCore.QObject):
         self.worker2 = Worker(self, name="worker2")
         self.thr2 = QtCore.QThread()
         self.worker2.moveToThread(self.thr2)
-        self.connect(self.thr2, QtCore.SIGNAL("started()"), self.worker2.run)
-        self.connect(self.thr2, QtCore.SIGNAL("started()"),
-                     lambda: self.worker_task.emit({'fcn': self.version_check,
-                                                    'params': [],
-                                                    'worker_name': "worker2"}))
+        self.thr2.started.connect(self.worker2.run)
+        self.thr2.started.connect(
+            lambda: self.worker_task.emit(
+                {
+                    'fcn': self.version_check,
+                    'params': [],
+                    'worker_name': "worker2"
+                }
+            ))
         self.thr2.start()
 
         ### Signal handling ###
