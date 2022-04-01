@@ -1,48 +1,52 @@
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
 #from GUIElements import *
 from GUIElements import FCEntry, FloatEntry, EvalEntry, FCCheckBox, \
     LengthEntry, FCTextArea, IntEntry, RadioSet, OptionalInputSection
 
 
-class ObjectUI(QtGui.QWidget):
+class ObjectUI(QWidget):
     """
     Base class for the UI of FlatCAM objects. Deriving classes should
-    put UI elements in ObjectUI.custom_box (QtGui.QLayout).
+    put UI elements in ObjectUI.custom_box (QLayout).
     """
 
     def __init__(self, icon_file='share/flatcam_icon32.png', title='FlatCAM Object', parent=None):
-        QtGui.QWidget.__init__(self, parent=parent)
+        QWidget.__init__(self, parent=parent)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         self.setLayout(layout)
 
         ## Page Title box (spacing between children)
-        self.title_box = QtGui.QHBoxLayout()
+        self.title_box = QHBoxLayout()
         layout.addLayout(self.title_box)
 
         ## Page Title icon
-        pixmap = QtGui.QPixmap(icon_file)
-        self.icon = QtGui.QLabel()
+        pixmap = QPixmap(icon_file)
+        self.icon = QLabel()
         self.icon.setPixmap(pixmap)
         self.title_box.addWidget(self.icon, stretch=0)
 
         ## Title label
-        self.title_label = QtGui.QLabel("<font size=5><b>" + title + "</b></font>")
-        self.title_label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.title_label = QLabel("<font size=5><b>" + title + "</b></font>")
+        self.title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.title_box.addWidget(self.title_label, stretch=1)
 
         ## Object name
-        self.name_box = QtGui.QHBoxLayout()
+        self.name_box = QHBoxLayout()
         layout.addLayout(self.name_box)
-        name_label = QtGui.QLabel("Name:")
+        name_label = QLabel("Name:")
         self.name_box.addWidget(name_label)
         self.name_entry = FCEntry()
         self.name_box.addWidget(self.name_entry)
 
         ## Box box for custom widgets
         # This gets populated in offspring implementations.
-        self.custom_box = QtGui.QVBoxLayout()
+        self.custom_box = QVBoxLayout()
         layout.addLayout(self.custom_box)
 
         ###########################
@@ -50,17 +54,17 @@ class ObjectUI(QtGui.QWidget):
         ###########################
 
         #### Scale ####
-        self.scale_label = QtGui.QLabel('<b>Scale:</b>')
+        self.scale_label = QLabel('<b>Scale:</b>')
         self.scale_label.setToolTip(
             "Change the size of the object."
         )
         layout.addWidget(self.scale_label)
 
-        self.scale_grid = QtGui.QGridLayout()
+        self.scale_grid = QGridLayout()
         layout.addLayout(self.scale_grid)
 
         # Factor
-        faclabel = QtGui.QLabel('Factor:')
+        faclabel = QLabel('Factor:')
         faclabel.setToolTip(
             "Factor by which to multiply\n"
             "geometric features of this object."
@@ -71,23 +75,23 @@ class ObjectUI(QtGui.QWidget):
         self.scale_grid.addWidget(self.scale_entry, 0, 1)
 
         # GO Button
-        self.scale_button = QtGui.QPushButton('Scale')
+        self.scale_button = QPushButton('Scale')
         self.scale_button.setToolTip(
             "Perform scaling operation."
         )
         layout.addWidget(self.scale_button)
 
         #### Offset ####
-        self.offset_label = QtGui.QLabel('<b>Offset:</b>')
+        self.offset_label = QLabel('<b>Offset:</b>')
         self.offset_label.setToolTip(
             "Change the position of this object."
         )
         layout.addWidget(self.offset_label)
 
-        self.offset_grid = QtGui.QGridLayout()
+        self.offset_grid = QGridLayout()
         layout.addLayout(self.offset_grid)
 
-        self.offset_vectorlabel = QtGui.QLabel('Vector:')
+        self.offset_vectorlabel = QLabel('Vector:')
         self.offset_vectorlabel.setToolTip(
             "Amount by which to move the object\n"
             "in the x and y axes in (x, y) format."
@@ -97,29 +101,29 @@ class ObjectUI(QtGui.QWidget):
         self.offsetvector_entry.setText("(0.0, 0.0)")
         self.offset_grid.addWidget(self.offsetvector_entry, 0, 1)
 
-        self.offset_button = QtGui.QPushButton('Offset')
+        self.offset_button = QPushButton('Offset')
         self.offset_button.setToolTip(
             "Perform the offset operation."
         )
         layout.addWidget(self.offset_button)
 
-        self.auto_offset_button = QtGui.QPushButton('Offset auto')
+        self.auto_offset_button = QPushButton('Offset auto')
         self.auto_offset_button.setToolTip(
             "Align the object with the x and y axes."
         )
         layout.addWidget(self.auto_offset_button)
         
         #### Mirror ####
-        self.mirror_label = QtGui.QLabel('<b>Mirror:</b>')
+        self.mirror_label = QLabel('<b>Mirror:</b>')
         self.mirror_label.setToolTip(
             "Flip the object along an axis."
         )
         layout.addWidget(self.mirror_label)
         
-        self.mirror_axis_grid = QtGui.QGridLayout()
+        self.mirror_axis_grid = QGridLayout()
         layout.addLayout(self.mirror_axis_grid)
         
-        axislabel = QtGui.QLabel('Axis:')
+        axislabel = QLabel('Axis:')
         axislabel.setToolTip(
             "Mirror axis parallel to the x or y axis."
         )
@@ -137,7 +141,7 @@ class ObjectUI(QtGui.QWidget):
         self.mirror_auto_center_cb.set_value(True)
         layout.addWidget(self.mirror_auto_center_cb)
 
-        self.mirror_button = QtGui.QPushButton('Mirror')
+        self.mirror_button = QPushButton('Mirror')
         self.mirror_button.setToolTip(
             "Perform the mirror operation."
         )
@@ -179,14 +183,14 @@ class CNCObjectUI(ObjectUI):
         self.mirror_button.hide()
 
         ## Plot options
-        self.plot_options_label = QtGui.QLabel("<b>Plot Options:</b>")
+        self.plot_options_label = QLabel("<b>Plot Options:</b>")
         self.custom_box.addWidget(self.plot_options_label)
 
-        grid0 = QtGui.QGridLayout()
+        grid0 = QGridLayout()
         self.custom_box.addLayout(grid0)
 
         # Plot CB
-        # self.plot_cb = QtGui.QCheckBox('Plot')
+        # self.plot_cb = QCheckBox('Plot')
         self.plot_cb = FCCheckBox('Plot')
         self.plot_cb.setToolTip(
             "Plot (show) this object."
@@ -194,7 +198,7 @@ class CNCObjectUI(ObjectUI):
         grid0.addWidget(self.plot_cb, 0, 0)
 
         # Tool dia for plot
-        tdlabel = QtGui.QLabel('Tool dia:')
+        tdlabel = QLabel('Tool dia:')
         tdlabel.setToolTip(
             "Diameter of the tool to be\n"
             "rendered in the plot."
@@ -204,7 +208,7 @@ class CNCObjectUI(ObjectUI):
         grid0.addWidget(self.tooldia_entry, 1, 1)
 
         # Update plot button
-        self.updateplot_button = QtGui.QPushButton('Update Plot')
+        self.updateplot_button = QPushButton('Update Plot')
         self.updateplot_button.setToolTip(
             "Update the plot."
         )
@@ -213,7 +217,7 @@ class CNCObjectUI(ObjectUI):
         ##################
         ## Export G-Code
         ##################
-        self.export_gcode_label = QtGui.QLabel("<b>Export G-Code:</b>")
+        self.export_gcode_label = QLabel("<b>Export G-Code:</b>")
         self.export_gcode_label.setToolTip(
             "Export and save G-Code to\n"
             "make this object to a file."
@@ -221,7 +225,7 @@ class CNCObjectUI(ObjectUI):
         self.custom_box.addWidget(self.export_gcode_label)
 
         # Prepend text to Gerber
-        prependlabel = QtGui.QLabel('Prepend to G-Code:')
+        prependlabel = QLabel('Prepend to G-Code:')
         prependlabel.setToolTip(
             "Type here any G-Code commands you would\n"
             "like to add to the beginning of the generated file."
@@ -232,7 +236,7 @@ class CNCObjectUI(ObjectUI):
         self.custom_box.addWidget(self.prepend_text)
 
         # Append text to Gerber
-        appendlabel = QtGui.QLabel('Append to G-Code:')
+        appendlabel = QLabel('Append to G-Code:')
         appendlabel.setToolTip(
             "Type here any G-Code commands you would\n"
             "like to append to the generated file.\n"
@@ -243,7 +247,7 @@ class CNCObjectUI(ObjectUI):
         self.append_text = FCTextArea()
         self.custom_box.addWidget(self.append_text)
 
-        processorlabel = QtGui.QLabel('Postprocessing-Script:')
+        processorlabel = QLabel('Postprocessing-Script:')
         processorlabel.setToolTip(
             "Enter a Postprocessing Script here.\n"
             "It gets applied to the G-Code after it\n"
@@ -255,15 +259,15 @@ class CNCObjectUI(ObjectUI):
 
 
         # Dwell
-        grid1 = QtGui.QGridLayout()
+        grid1 = QGridLayout()
         self.custom_box.addLayout(grid1)
 
-        dwelllabel = QtGui.QLabel('Dwell:')
+        dwelllabel = QLabel('Dwell:')
         dwelllabel.setToolTip(
             "Pause to allow the spindle to reach its\n"
             "speed before cutting."
         )
-        dwelltime = QtGui.QLabel('Duration [sec.]:')
+        dwelltime = QLabel('Duration [sec.]:')
         dwelltime.setToolTip(
             "Number of second to dwell."
         )
@@ -275,7 +279,7 @@ class CNCObjectUI(ObjectUI):
         grid1.addWidget(self.dwelltime_entry, 1, 1)
 
         # GO Button
-        self.export_gcode_button = QtGui.QPushButton('Export G-Code')
+        self.export_gcode_button = QPushButton('Export G-Code')
         self.export_gcode_button.setToolTip(
             "Opens dialog to save G-Code\n"
             "file."
@@ -292,7 +296,7 @@ class GeometryObjectUI(ObjectUI):
         super(GeometryObjectUI, self).__init__(title='Geometry Object', icon_file='share/geometry32.png', parent=parent)
 
         ## Plot options
-        self.plot_options_label = QtGui.QLabel("<b>Plot Options:</b>")
+        self.plot_options_label = QLabel("<b>Plot Options:</b>")
         self.custom_box.addWidget(self.plot_options_label)
 
         # Plot CB
@@ -305,7 +309,7 @@ class GeometryObjectUI(ObjectUI):
         #-----------------------------------
         # Create CNC Job
         #-----------------------------------
-        self.cncjob_label = QtGui.QLabel('<b>Create CNC Job:</b>')
+        self.cncjob_label = QLabel('<b>Create CNC Job:</b>')
         self.cncjob_label.setToolTip(
             "Create a CNC Job object\n"
             "tracing the contours of this\n"
@@ -313,10 +317,10 @@ class GeometryObjectUI(ObjectUI):
         )
         self.custom_box.addWidget(self.cncjob_label)
 
-        grid1 = QtGui.QGridLayout()
+        grid1 = QGridLayout()
         self.custom_box.addLayout(grid1)
 
-        cutzlabel = QtGui.QLabel('Cut Z:')
+        cutzlabel = QLabel('Cut Z:')
         cutzlabel.setToolTip(
             "Cutting depth (negative)\n"
             "below the copper surface."
@@ -326,7 +330,7 @@ class GeometryObjectUI(ObjectUI):
         grid1.addWidget(self.cutz_entry, 0, 1)
 
         # Travel Z
-        travelzlabel = QtGui.QLabel('Travel Z:')
+        travelzlabel = QLabel('Travel Z:')
         travelzlabel.setToolTip(
             "Height of the tool when\n"
             "moving without cutting."
@@ -336,7 +340,7 @@ class GeometryObjectUI(ObjectUI):
         grid1.addWidget(self.travelz_entry, 1, 1)
 
         # Feedrate
-        frlabel = QtGui.QLabel('Feed Rate:')
+        frlabel = QLabel('Feed Rate:')
         frlabel.setToolTip(
             "Cutting speed in the XY\n"
             "plane in units per minute"
@@ -346,7 +350,7 @@ class GeometryObjectUI(ObjectUI):
         grid1.addWidget(self.cncfeedrate_entry, 2, 1)
 
         # Tooldia
-        tdlabel = QtGui.QLabel('Tool dia:')
+        tdlabel = QLabel('Tool dia:')
         tdlabel.setToolTip(
             "The diameter of the cutting\n"
             "tool (just for display)."
@@ -356,7 +360,7 @@ class GeometryObjectUI(ObjectUI):
         grid1.addWidget(self.cnctooldia_entry, 3, 1)
 
         # Spindlespeed
-        spdlabel = QtGui.QLabel('Spindle speed:')
+        spdlabel = QLabel('Spindle speed:')
         spdlabel.setToolTip(
             "Speed of the spindle\n"
             "in RPM (optional)"
@@ -366,7 +370,7 @@ class GeometryObjectUI(ObjectUI):
         grid1.addWidget(self.cncspindlespeed_entry, 4, 1)
 
         # Multi-pass
-        mpasslabel = QtGui.QLabel('Multi-Depth:')
+        mpasslabel = QLabel('Multi-Depth:')
         mpasslabel.setToolTip(
             "Use multiple passes to limit\n"
             "the cut depth in each pass. Will\n"
@@ -377,7 +381,7 @@ class GeometryObjectUI(ObjectUI):
         self.mpass_cb = FCCheckBox()
         grid1.addWidget(self.mpass_cb, 5, 1)
 
-        maxdepthlabel = QtGui.QLabel('Depth/pass:')
+        maxdepthlabel = QLabel('Depth/pass:')
         maxdepthlabel.setToolTip(
             "Depth of each pass (positive)."
         )
@@ -388,7 +392,7 @@ class GeometryObjectUI(ObjectUI):
         self.ois_mpass = OptionalInputSection(self.mpass_cb, [self.maxdepth_entry])
 
         # Button
-        self.generate_cnc_button = QtGui.QPushButton('Generate')
+        self.generate_cnc_button = QPushButton('Generate')
         self.generate_cnc_button.setToolTip(
             "Generate the CNC Job object."
         )
@@ -397,7 +401,7 @@ class GeometryObjectUI(ObjectUI):
         #------------------------------
         # Paint area
         #------------------------------
-        self.paint_label = QtGui.QLabel('<b>Paint Area:</b>')
+        self.paint_label = QLabel('<b>Paint Area:</b>')
         self.paint_label.setToolTip(
             "Creates tool paths to cover the\n"
             "whole area of a polygon (remove\n"
@@ -406,11 +410,11 @@ class GeometryObjectUI(ObjectUI):
         )
         self.custom_box.addWidget(self.paint_label)
 
-        grid2 = QtGui.QGridLayout()
+        grid2 = QGridLayout()
         self.custom_box.addLayout(grid2)
 
         # Tool dia
-        ptdlabel = QtGui.QLabel('Tool dia:')
+        ptdlabel = QLabel('Tool dia:')
         ptdlabel.setToolTip(
             "Diameter of the tool to\n"
             "be used in the operation."
@@ -421,7 +425,7 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.painttooldia_entry, 0, 1)
 
         # Overlap
-        ovlabel = QtGui.QLabel('Overlap:')
+        ovlabel = QLabel('Overlap:')
         ovlabel.setToolTip(
             "How much (fraction) of the tool\n"
             "width to overlap each tool pass."
@@ -431,7 +435,7 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.paintoverlap_entry, 1, 1)
 
         # Margin
-        marginlabel = QtGui.QLabel('Margin:')
+        marginlabel = QLabel('Margin:')
         marginlabel.setToolTip(
             "Distance by which to avoid\n"
             "the edges of the polygon to\n"
@@ -442,8 +446,8 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.paintmargin_entry, 2, 1)
 
         # Method
-        methodlabel = QtGui.QLabel('Method:')
-        methodlabel.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        methodlabel = QLabel('Method:')
+        methodlabel.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         methodlabel.setToolTip(
             "Algorithm to paint the polygon:<BR>"
             "<B>Standard</B>: Fixed step inwards.<BR>"
@@ -458,7 +462,7 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.paintmethod_combo, 3, 1)
 
         # Connect lines
-        pathconnectlabel = QtGui.QLabel("Connect:")
+        pathconnectlabel = QLabel("Connect:")
         pathconnectlabel.setToolTip(
             "Draw lines between resulting\n"
             "segments to minimize tool lifts."
@@ -467,7 +471,7 @@ class GeometryObjectUI(ObjectUI):
         self.pathconnect_cb = FCCheckBox()
         grid2.addWidget(self.pathconnect_cb, 4, 1)
 
-        contourlabel = QtGui.QLabel("Contour:")
+        contourlabel = QLabel("Contour:")
         contourlabel.setToolTip(
             "Cut around the perimeter of the polygon\n"
             "to trim rough edges."
@@ -477,12 +481,12 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.paintcontour_cb, 5, 1)
 
         # Polygon selection
-        selectlabel = QtGui.QLabel('Selection:')
+        selectlabel = QLabel('Selection:')
         selectlabel.setToolTip(
             "How to select the polygons to paint."
         )
         grid2.addWidget(selectlabel, 6, 0)
-        #grid3 = QtGui.QGridLayout()
+        #grid3 = QGridLayout()
         self.selectmethod_combo = RadioSet([
             {"label": "Single", "value": "single"},
             {"label": "All", "value": "all"},
@@ -491,7 +495,7 @@ class GeometryObjectUI(ObjectUI):
         grid2.addWidget(self.selectmethod_combo, 6, 1)
 
         # GO Button
-        self.generate_paint_button = QtGui.QPushButton('Generate')
+        self.generate_paint_button = QPushButton('Generate')
         self.generate_paint_button.setToolTip(
             "After clicking here, click inside\n"
             "the polygon you wish to be painted.\n"
@@ -513,10 +517,10 @@ class ExcellonObjectUI(ObjectUI):
 
         #### Plot options ####
 
-        self.plot_options_label = QtGui.QLabel("<b>Plot Options:</b>")
+        self.plot_options_label = QLabel("<b>Plot Options:</b>")
         self.custom_box.addWidget(self.plot_options_label)
 
-        grid0 = QtGui.QGridLayout()
+        grid0 = QGridLayout()
         self.custom_box.addLayout(grid0)
         self.plot_cb = FCCheckBox(label='Plot')
         self.plot_cb.setToolTip(
@@ -531,28 +535,28 @@ class ExcellonObjectUI(ObjectUI):
 
         #### Tools ####
 
-        self.tools_table_label = QtGui.QLabel('<b>Tools</b>')
+        self.tools_table_label = QLabel('<b>Tools</b>')
         self.tools_table_label.setToolTip(
             "Tools in this Excellon object."
         )
         self.custom_box.addWidget(self.tools_table_label)
-        self.tools_table = QtGui.QTableWidget()
+        self.tools_table = QTableWidget()
         self.tools_table.setFixedHeight(100)
         self.custom_box.addWidget(self.tools_table)
 
         #### Create CNC Job ####
 
-        self.cncjob_label = QtGui.QLabel('<b>Create CNC Job</b>')
+        self.cncjob_label = QLabel('<b>Create CNC Job</b>')
         self.cncjob_label.setToolTip(
             "Create a CNC Job object\n"
             "for this drill object."
         )
         self.custom_box.addWidget(self.cncjob_label)
 
-        grid1 = QtGui.QGridLayout()
+        grid1 = QGridLayout()
         self.custom_box.addLayout(grid1)
 
-        cutzlabel = QtGui.QLabel('Cut Z:')
+        cutzlabel = QLabel('Cut Z:')
         cutzlabel.setToolTip(
             "Drill depth (negative)\n"
             "below the copper surface."
@@ -561,7 +565,7 @@ class ExcellonObjectUI(ObjectUI):
         self.cutz_entry = LengthEntry()
         grid1.addWidget(self.cutz_entry, 0, 1)
 
-        travelzlabel = QtGui.QLabel('Travel Z:')
+        travelzlabel = QLabel('Travel Z:')
         travelzlabel.setToolTip(
             "Tool height when travelling\n"
             "across the XY plane."
@@ -570,7 +574,7 @@ class ExcellonObjectUI(ObjectUI):
         self.travelz_entry = LengthEntry()
         grid1.addWidget(self.travelz_entry, 1, 1)
 
-        frlabel = QtGui.QLabel('Feed rate:')
+        frlabel = QLabel('Feed rate:')
         frlabel.setToolTip(
             "Tool speed while drilling\n"
             "(in units per minute)."
@@ -580,7 +584,7 @@ class ExcellonObjectUI(ObjectUI):
         grid1.addWidget(self.feedrate_entry, 2, 1)
 
         # Tool change:
-        toolchlabel = QtGui.QLabel("Tool change:")
+        toolchlabel = QLabel("Tool change:")
         toolchlabel.setToolTip(
             "Include tool-change sequence\n"
             "in G-Code (Pause for tool change)."
@@ -590,7 +594,7 @@ class ExcellonObjectUI(ObjectUI):
         grid1.addWidget(self.toolchange_cb, 3, 1)
 
         # Tool change Z:
-        toolchzlabel = QtGui.QLabel("Tool change Z:")
+        toolchzlabel = QLabel("Tool change Z:")
         toolchzlabel.setToolTip(
             "Z-axis position (height) for\n"
             "tool change."
@@ -601,7 +605,7 @@ class ExcellonObjectUI(ObjectUI):
         self.ois_tcz = OptionalInputSection(self.toolchange_cb, [self.toolchangez_entry])
 
         # Spindlespeed
-        spdlabel = QtGui.QLabel('Spindle speed:')
+        spdlabel = QLabel('Spindle speed:')
         spdlabel.setToolTip(
             "Speed of the spindle\n"
             "in RPM (optional)"
@@ -610,28 +614,28 @@ class ExcellonObjectUI(ObjectUI):
         self.spindlespeed_entry = IntEntry(allow_empty=True)
         grid1.addWidget(self.spindlespeed_entry, 5, 1)
 
-        choose_tools_label = QtGui.QLabel(
+        choose_tools_label = QLabel(
             "Select from the tools section above\n"
             "the tools you want to include."
         )
         self.custom_box.addWidget(choose_tools_label)
 
-        self.generate_cnc_button = QtGui.QPushButton('Generate')
+        self.generate_cnc_button = QPushButton('Generate')
         self.generate_cnc_button.setToolTip(
             "Generate the CNC Job."
         )
         self.custom_box.addWidget(self.generate_cnc_button)
 
         #### Milling Holes ####
-        self.mill_hole_label = QtGui.QLabel('<b>Mill Holes</b>')
+        self.mill_hole_label = QLabel('<b>Mill Holes</b>')
         self.mill_hole_label.setToolTip(
             "Create Geometry for milling holes."
         )
         self.custom_box.addWidget(self.mill_hole_label)
 
-        grid1 = QtGui.QGridLayout()
+        grid1 = QGridLayout()
         self.custom_box.addLayout(grid1)
-        tdlabel = QtGui.QLabel('Tool dia:')
+        tdlabel = QLabel('Tool dia:')
         tdlabel.setToolTip(
             "Diameter of the cutting tool."
         )
@@ -639,13 +643,13 @@ class ExcellonObjectUI(ObjectUI):
         self.tooldia_entry = LengthEntry()
         grid1.addWidget(self.tooldia_entry, 0, 1)
 
-        choose_tools_label2 = QtGui.QLabel(
+        choose_tools_label2 = QLabel(
             "Select from the tools section above\n"
             "the tools you want to include."
         )
         self.custom_box.addWidget(choose_tools_label2)
 
-        self.generate_milling_button = QtGui.QPushButton('Generate Geometry')
+        self.generate_milling_button = QPushButton('Generate Geometry')
         self.generate_milling_button.setToolTip(
             "Create the Geometry Object\n"
             "for milling toolpaths."
@@ -662,10 +666,10 @@ class GerberObjectUI(ObjectUI):
         ObjectUI.__init__(self, title='Gerber Object', parent=parent)
 
         ## Plot options
-        self.plot_options_label = QtGui.QLabel("<b>Plot Options:</b>")
+        self.plot_options_label = QLabel("<b>Plot Options:</b>")
         self.custom_box.addWidget(self.plot_options_label)
 
-        grid0 = QtGui.QGridLayout()
+        grid0 = QGridLayout()
         self.custom_box.addLayout(grid0)
         # Plot CB
         self.plot_cb = FCCheckBox(label='Plot')
@@ -689,16 +693,16 @@ class GerberObjectUI(ObjectUI):
         grid0.addWidget(self.multicolored_cb, 0, 2)
 
         ## Isolation Routing
-        self.isolation_routing_label = QtGui.QLabel("<b>Isolation Routing:</b>")
+        self.isolation_routing_label = QLabel("<b>Isolation Routing:</b>")
         self.isolation_routing_label.setToolTip(
             "Create a Geometry object with\n"
             "toolpaths to cut outside polygons."
         )
         self.custom_box.addWidget(self.isolation_routing_label)
 
-        grid1 = QtGui.QGridLayout()
+        grid1 = QGridLayout()
         self.custom_box.addLayout(grid1)
-        tdlabel = QtGui.QLabel('Tool dia:')
+        tdlabel = QLabel('Tool dia:')
         tdlabel.setToolTip(
             "Diameter of the cutting tool."
         )
@@ -706,7 +710,7 @@ class GerberObjectUI(ObjectUI):
         self.iso_tool_dia_entry = LengthEntry()
         grid1.addWidget(self.iso_tool_dia_entry, 0, 1)
 
-        passlabel = QtGui.QLabel('Width (# passes):')
+        passlabel = QLabel('Width (# passes):')
         passlabel.setToolTip(
             "Width of the isolation gap in\n"
             "number (integer) of tool widths."
@@ -715,7 +719,7 @@ class GerberObjectUI(ObjectUI):
         self.iso_width_entry = IntEntry()
         grid1.addWidget(self.iso_width_entry, 1, 1)
 
-        overlabel = QtGui.QLabel('Pass overlap:')
+        overlabel = QLabel('Pass overlap:')
         overlabel.setToolTip(
             "How much (fraction of tool width)\n"
             "to overlap each pass."
@@ -732,7 +736,7 @@ class GerberObjectUI(ObjectUI):
         grid1.addWidget(self.combine_passes_cb, 3, 0)
 
 
-        self.generate_iso_button = QtGui.QPushButton('Generate Geometry')
+        self.generate_iso_button = QPushButton('Generate Geometry')
         self.generate_iso_button.setToolTip(
             "Create the Geometry Object\n"
             "for isolation routing."
@@ -740,7 +744,7 @@ class GerberObjectUI(ObjectUI):
         self.custom_box.addWidget(self.generate_iso_button)
 
         ## Board cuttout
-        self.board_cutout_label = QtGui.QLabel("<b>Board cutout:</b>")
+        self.board_cutout_label = QLabel("<b>Board cutout:</b>")
         self.board_cutout_label.setToolTip(
             "Create toolpaths to cut around\n"
             "the PCB and separate it from\n"
@@ -748,9 +752,9 @@ class GerberObjectUI(ObjectUI):
         )
         self.custom_box.addWidget(self.board_cutout_label)
 
-        grid2 = QtGui.QGridLayout()
+        grid2 = QGridLayout()
         self.custom_box.addLayout(grid2)
-        tdclabel = QtGui.QLabel('Tool dia:')
+        tdclabel = QLabel('Tool dia:')
         tdclabel.setToolTip(
             "Diameter of the cutting tool."
         )
@@ -758,7 +762,7 @@ class GerberObjectUI(ObjectUI):
         self.cutout_tooldia_entry = LengthEntry()
         grid2.addWidget(self.cutout_tooldia_entry, 0, 1)
 
-        marginlabel = QtGui.QLabel('Margin:')
+        marginlabel = QLabel('Margin:')
         marginlabel.setToolTip(
             "Distance from objects at which\n"
             "to draw the cutout."
@@ -767,7 +771,7 @@ class GerberObjectUI(ObjectUI):
         self.cutout_margin_entry = LengthEntry()
         grid2.addWidget(self.cutout_margin_entry, 1, 1)
 
-        gaplabel = QtGui.QLabel('Gap size:')
+        gaplabel = QLabel('Gap size:')
         gaplabel.setToolTip(
             "Size of the gaps in the toolpath\n"
             "that will remain to hold the\n"
@@ -777,7 +781,7 @@ class GerberObjectUI(ObjectUI):
         self.cutout_gap_entry = LengthEntry()
         grid2.addWidget(self.cutout_gap_entry, 2, 1)
 
-        gapslabel = QtGui.QLabel('Gaps:')
+        gapslabel = QLabel('Gaps:')
         gapslabel.setToolTip(
             "Where to place the gaps, Top/Bottom\n"
             "Left/Rigt, or on all 4 sides."
@@ -788,7 +792,7 @@ class GerberObjectUI(ObjectUI):
                                     {'label': '4', 'value': '4'}])
         grid2.addWidget(self.gaps_radio, 3, 1)
 
-        self.generate_cutout_button = QtGui.QPushButton('Generate Geometry')
+        self.generate_cutout_button = QPushButton('Generate Geometry')
         self.generate_cutout_button.setToolTip(
             "Generate the geometry for\n"
             "the board cutout."
@@ -796,7 +800,7 @@ class GerberObjectUI(ObjectUI):
         self.custom_box.addWidget(self.generate_cutout_button)
 
         ## Non-copper regions
-        self.noncopper_label = QtGui.QLabel("<b>Non-copper regions:</b>")
+        self.noncopper_label = QLabel("<b>Non-copper regions:</b>")
         self.noncopper_label.setToolTip(
             "Create polygons covering the\n"
             "areas without copper on the PCB.\n"
@@ -806,11 +810,11 @@ class GerberObjectUI(ObjectUI):
         )
         self.custom_box.addWidget(self.noncopper_label)
 
-        grid3 = QtGui.QGridLayout()
+        grid3 = QGridLayout()
         self.custom_box.addLayout(grid3)
 
         # Margin
-        bmlabel = QtGui.QLabel('Boundary Margin:')
+        bmlabel = QLabel('Boundary Margin:')
         bmlabel.setToolTip(
             "Specify the edge of the PCB\n"
             "by drawing a box around all\n"
@@ -829,17 +833,17 @@ class GerberObjectUI(ObjectUI):
         )
         grid3.addWidget(self.noncopper_rounded_cb, 1, 0, 1, 2)
 
-        self.generate_noncopper_button = QtGui.QPushButton('Generate Geometry')
+        self.generate_noncopper_button = QPushButton('Generate Geometry')
         self.custom_box.addWidget(self.generate_noncopper_button)
 
         ## Bounding box
-        self.boundingbox_label = QtGui.QLabel('<b>Bounding Box:</b>')
+        self.boundingbox_label = QLabel('<b>Bounding Box:</b>')
         self.custom_box.addWidget(self.boundingbox_label)
 
-        grid4 = QtGui.QGridLayout()
+        grid4 = QGridLayout()
         self.custom_box.addLayout(grid4)
 
-        bbmargin = QtGui.QLabel('Boundary Margin:')
+        bbmargin = QLabel('Boundary Margin:')
         bbmargin.setToolTip(
             "Distance of the edges of the box\n"
             "to the nearest polygon."
@@ -857,7 +861,7 @@ class GerberObjectUI(ObjectUI):
         )
         grid4.addWidget(self.bbrounded_cb, 1, 0, 1, 2)
 
-        self.generate_bb_button = QtGui.QPushButton('Generate Geometry')
+        self.generate_bb_button = QPushButton('Generate Geometry')
         self.generate_bb_button.setToolTip(
             "Generate the Geometry object."
         )
@@ -866,7 +870,7 @@ class GerberObjectUI(ObjectUI):
 
 # def main():
 #
-#     app = QtGui.QApplication(sys.argv)
+#     app = QApplication(sys.argv)
 #     fc = GerberObjectUI()
 #     sys.exit(app.exec_())
 #

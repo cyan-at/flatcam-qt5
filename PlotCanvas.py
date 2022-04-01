@@ -6,7 +6,7 @@
 # MIT Licence                                              #
 ############################################################
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 
 # Prevent conflict with Qt5 and above.
 from matplotlib import use as mpl_use

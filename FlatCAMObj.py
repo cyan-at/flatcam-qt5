@@ -7,7 +7,10 @@
 ############################################################
 
 from io import StringIO
-from PyQt4 import QtCore
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from copy import copy
 from ObjectUI import *
 import FlatCAMApp
@@ -20,7 +23,7 @@ from FlatCAMDraw import FlatCAMDraw
 ########################################
 ##            FlatCAMObj              ##
 ########################################
-class FlatCAMObj(QtCore.QObject):
+class FlatCAMObj(QObject):
     """
     Base type of objects handled in FlatCAM. These become interactive
     in the GUI, can be plotted, and their options can be modified
@@ -31,7 +34,7 @@ class FlatCAMObj(QtCore.QObject):
     # The app should set this value.
     app = None
     
-    option_changed = QtCore.pyqtSignal(QtCore.QObject, str)
+    option_changed = pyqtSignal(QObject, str)
 
     def __init__(self, name):
         """
@@ -40,7 +43,7 @@ class FlatCAMObj(QtCore.QObject):
         :param name: Name of the object given by the user.
         :return: FlatCAMObj
         """
-        QtCore.QObject.__init__(self)
+        QObject.__init__(self)
 
         # View
         self.ui = None
@@ -81,7 +84,7 @@ class FlatCAMObj(QtCore.QObject):
                 setattr(self, attr, d[attr])
 
     def on_options_change(self, key):
-        #self.emit(QtCore.SIGNAL("optionChanged()"), key)
+        #self.emit(SIGNAL("optionChanged()"), key)
         self.option_changed.emit(self, key)
 
     def set_ui(self, ui):
@@ -798,13 +801,13 @@ class FlatCAMExcellon(FlatCAMObj, Excellon):
                 if drill.get('tool') == tool:
                     drill_cnt += 1
 
-            id = QtGui.QTableWidgetItem(tool)
-            id.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            id = QTableWidgetItem(tool)
+            id.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
             self.ui.tools_table.setItem(i, 0, id)  # Tool name/id
-            dia = QtGui.QTableWidgetItem(str(self.tools[tool]['C']))
-            dia.setFlags(QtCore.Qt.ItemIsEnabled)
-            drill_count = QtGui.QTableWidgetItem('%d' % drill_cnt)
-            drill_count.setFlags(QtCore.Qt.ItemIsEnabled)
+            dia = QTableWidgetItem(str(self.tools[tool]['C']))
+            dia.setFlags(Qt.ItemIsEnabled)
+            drill_count = QTableWidgetItem('%d' % drill_cnt)
+            drill_count.setFlags(Qt.ItemIsEnabled)
             self.ui.tools_table.setItem(i, 1, dia)  # Diameter
             self.ui.tools_table.setItem(i, 2, drill_count)  # Number of drills per tool
             i += 1
@@ -817,9 +820,9 @@ class FlatCAMExcellon(FlatCAMObj, Excellon):
         self.ui.tools_table.resizeColumnsToContents()
         self.ui.tools_table.resizeRowsToContents()
         horizontal_header = self.ui.tools_table.horizontalHeader()
-        horizontal_header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        horizontal_header.setResizeMode(1, QtGui.QHeaderView.Stretch)
-        horizontal_header.setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
+        horizontal_header.setResizeMode(0, QHeaderView.ResizeToContents)
+        horizontal_header.setResizeMode(1, QHeaderView.Stretch)
+        horizontal_header.setResizeMode(2, QHeaderView.ResizeToContents)
         # horizontal_header.setStretchLastSection(True)
         self.ui.tools_table.verticalHeader().hide()
         self.ui.tools_table.setSortingEnabled(True)
@@ -1117,10 +1120,10 @@ class FlatCAMCNCjob(FlatCAMObj, CNCjob):
         self.read_form()
 
         try:
-            filename = str(QtGui.QFileDialog.getSaveFileName(caption="Export G-Code ...",
+            filename = str(QFileDialog.getSaveFileName(caption="Export G-Code ...",
                                                          directory=self.app.defaults["last_folder"]))
         except TypeError:
-            filename = str(QtGui.QFileDialog.getSaveFileName(caption="Export G-Code ..."))
+            filename = str(QFileDialog.getSaveFileName(caption="Export G-Code ..."))
 
         preamble = str(self.ui.prepend_text.get_value())
         postamble = str(self.ui.append_text.get_value())

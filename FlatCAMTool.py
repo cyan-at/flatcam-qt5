@@ -6,10 +6,14 @@
 # MIT Licence                                              #
 ############################################################
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets as QtGui
 
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
-class FlatCAMTool(QtGui.QWidget):
+class FlatCAMTool(QWidget):
 
     toolName = "FlatCAM Generic Tool"
 
@@ -21,11 +25,11 @@ class FlatCAMTool(QtGui.QWidget):
         :param parent: Qt Parent
         :return: FlatCAMTool
         """
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
-        # self.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        # self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
         self.app = app
@@ -49,7 +53,7 @@ class FlatCAMTool(QtGui.QWidget):
             before = (kwargs['before'])
 
         # create the new Action
-        self.menuAction = QtGui.QAction(self)
+        self.menuAction = QAction(self)
         # if provided, add an icon to this Action
         if icon is not None:
             self.menuAction.setIcon(icon)

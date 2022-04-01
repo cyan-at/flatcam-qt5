@@ -6,7 +6,7 @@
 # MIT Licence                                              #
 ############################################################
 
-from PyQt4 import QtGui, QtCore, Qt
+from PyQt5 import QtGui, QtCore, Qt
 import FlatCAMApp
 from camlib import *
 from FlatCAMTool import FlatCAMTool
@@ -30,6 +30,9 @@ from rtree import index as rtindex
 
 from GUIElements import FCEntry
 
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 class BufferSelectionTool(FlatCAMTool):
     """
@@ -44,11 +47,11 @@ class BufferSelectionTool(FlatCAMTool):
         self.fcdraw = fcdraw
 
         ## Title
-        title_label = QtGui.QLabel("<font size=4><b>%s</b></font>" % self.toolName)
+        title_label = QLabel("<font size=4><b>%s</b></font>" % self.toolName)
         self.layout.addWidget(title_label)
 
         ## Form Layout
-        form_layout = QtGui.QFormLayout()
+        form_layout = QFormLayout()
         self.layout.addLayout(form_layout)
 
         ## Buffer distance
@@ -56,10 +59,10 @@ class BufferSelectionTool(FlatCAMTool):
         form_layout.addRow("Buffer distance:", self.buffer_distance_entry)
 
         ## Buttons
-        hlay = QtGui.QHBoxLayout()
+        hlay = QHBoxLayout()
         self.layout.addLayout(hlay)
         hlay.addStretch()
-        self.buffer_button = QtGui.QPushButton("Buffer")
+        self.buffer_button = QPushButton("Buffer")
         hlay.addWidget(self.buffer_button)
 
         self.layout.addStretch()
@@ -86,15 +89,15 @@ class PaintOptionsTool(FlatCAMTool):
         self.fcdraw = fcdraw
 
         ## Title
-        title_label = QtGui.QLabel("<font size=4><b>%s</b></font>" % self.toolName)
+        title_label = QLabel("<font size=4><b>%s</b></font>" % self.toolName)
         self.layout.addWidget(title_label)
 
         ## Form Layout
-        form_layout = QtGui.QFormLayout()
+        form_layout = QFormLayout()
         self.layout.addLayout(form_layout)
 
         # Tool dia
-        ptdlabel = QtGui.QLabel('Tool dia:')
+        ptdlabel = QLabel('Tool dia:')
         ptdlabel.setToolTip(
             "Diameter of the tool to\n"
             "be used in the operation."
@@ -104,7 +107,7 @@ class PaintOptionsTool(FlatCAMTool):
         form_layout.addRow(ptdlabel, self.painttooldia_entry)
 
         # Overlap
-        ovlabel = QtGui.QLabel('Overlap:')
+        ovlabel = QLabel('Overlap:')
         ovlabel.setToolTip(
             "How much (fraction) of the tool\n"
             "width to overlap each tool pass."
@@ -114,7 +117,7 @@ class PaintOptionsTool(FlatCAMTool):
         form_layout.addRow(ovlabel, self.paintoverlap_entry)
 
         # Margin
-        marginlabel = QtGui.QLabel('Margin:')
+        marginlabel = QLabel('Margin:')
         marginlabel.setToolTip(
             "Distance by which to avoid\n"
             "the edges of the polygon to\n"
@@ -125,7 +128,7 @@ class PaintOptionsTool(FlatCAMTool):
         form_layout.addRow(marginlabel, self.paintmargin_entry)
 
         # Method
-        methodlabel = QtGui.QLabel('Method:')
+        methodlabel = QLabel('Method:')
         methodlabel.setToolTip(
             "Algorithm to paint the polygon:<BR>"
             "<B>Standard</B>: Fixed step inwards.<BR>"
@@ -139,10 +142,10 @@ class PaintOptionsTool(FlatCAMTool):
         form_layout.addRow(methodlabel, self.paintmethod_combo)
 
         ## Buttons
-        hlay = QtGui.QHBoxLayout()
+        hlay = QHBoxLayout()
         self.layout.addLayout(hlay)
         hlay.addStretch()
-        self.paint_button = QtGui.QPushButton("Paint")
+        self.paint_button = QPushButton("Paint")
         hlay.addWidget(self.paint_button)
 
         self.layout.addStretch()
@@ -692,36 +695,36 @@ class FlatCAMDraw(QtCore.QObject):
         self.axes = self.canvas.new_axes("draw")
 
         ### Drawing Toolbar ###
-        self.drawing_toolbar = QtGui.QToolBar("Draw Toolbar")
+        self.drawing_toolbar = QToolBar("Draw Toolbar")
         self.drawing_toolbar.setDisabled(disabled)
         self.app.ui.addToolBar(self.drawing_toolbar)
 
-        self.select_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/pointer32.png'), "Select 'Esc'")
+        self.select_btn = self.drawing_toolbar.addAction(QIcon('share/pointer32.png'), "Select 'Esc'")
         # Separator
         self.drawing_toolbar.addSeparator()
-        self.add_circle_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/circle32.png'), 'Add Circle')
-        self.add_arc_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/arc32.png'), 'Add Arc')
-        self.add_rectangle_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/rectangle32.png'), 'Add Rectangle')
-        self.add_polygon_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/polygon32.png'), 'Add Polygon')
-        self.add_path_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/path32.png'), 'Add Path')
+        self.add_circle_btn = self.drawing_toolbar.addAction(QIcon('share/circle32.png'), 'Add Circle')
+        self.add_arc_btn = self.drawing_toolbar.addAction(QIcon('share/arc32.png'), 'Add Arc')
+        self.add_rectangle_btn = self.drawing_toolbar.addAction(QIcon('share/rectangle32.png'), 'Add Rectangle')
+        self.add_polygon_btn = self.drawing_toolbar.addAction(QIcon('share/polygon32.png'), 'Add Polygon')
+        self.add_path_btn = self.drawing_toolbar.addAction(QIcon('share/path32.png'), 'Add Path')
 
         # Separator
         self.drawing_toolbar.addSeparator()
-        self.union_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/union32.png'), 'Polygon Union')
-        self.intersection_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/intersection32.png'), 'Polygon Intersection')
-        self.subtract_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/subtract32.png'), 'Polygon Subtraction')
-        self.cutpath_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/cutpath32.png'), 'Cut Path')
+        self.union_btn = self.drawing_toolbar.addAction(QIcon('share/union32.png'), 'Polygon Union')
+        self.intersection_btn = self.drawing_toolbar.addAction(QIcon('share/intersection32.png'), 'Polygon Intersection')
+        self.subtract_btn = self.drawing_toolbar.addAction(QIcon('share/subtract32.png'), 'Polygon Subtraction')
+        self.cutpath_btn = self.drawing_toolbar.addAction(QIcon('share/cutpath32.png'), 'Cut Path')
 
         # Separator
         self.drawing_toolbar.addSeparator()
-        self.move_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/move32.png'), "Move Objects 'm'")
-        self.copy_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/copy32.png'), "Copy Objects 'c'")
-        self.delete_btn = self.drawing_toolbar.addAction(QtGui.QIcon('share/deleteshape32.png'), "Delete Shape '-'")
+        self.move_btn = self.drawing_toolbar.addAction(QIcon('share/move32.png'), "Move Objects 'm'")
+        self.copy_btn = self.drawing_toolbar.addAction(QIcon('share/copy32.png'), "Copy Objects 'c'")
+        self.delete_btn = self.drawing_toolbar.addAction(QIcon('share/deleteshape32.png'), "Delete Shape '-'")
 
         ### Snap Toolbar ###
 
-        self.snap_toolbar = QtGui.QToolBar("Grid Toolbar")
-        self.grid_snap_btn = self.snap_toolbar.addAction(QtGui.QIcon('share/grid32.png'), 'Snap to grid')
+        self.snap_toolbar = QToolBar("Grid Toolbar")
+        self.grid_snap_btn = self.snap_toolbar.addAction(QIcon('share/grid32.png'), 'Snap to grid')
         self.grid_gap_x_entry = FCEntry()
 
         self.grid_gap_x_entry.setMaximumWidth(70)
@@ -733,7 +736,7 @@ class FlatCAMDraw(QtCore.QObject):
         self.snap_toolbar.addWidget(self.grid_gap_y_entry)
 
 
-        self.corner_snap_btn = self.snap_toolbar.addAction(QtGui.QIcon('share/corner32.png'), 'Snap to corner')
+        self.corner_snap_btn = self.snap_toolbar.addAction(QIcon('share/corner32.png'), 'Snap to corner')
         self.snap_max_dist_entry = FCEntry()
 
         self.snap_max_dist_entry.setMaximumWidth(70)
@@ -744,25 +747,25 @@ class FlatCAMDraw(QtCore.QObject):
         self.app.ui.addToolBar(self.snap_toolbar)
 
         ### Application menu ###
-        self.menu = QtGui.QMenu("Drawing")
+        self.menu = QMenu("Drawing")
         self.app.ui.menu.insertMenu(self.app.ui.menutoolaction, self.menu)
-        # self.select_menuitem = self.menu.addAction(QtGui.QIcon('share:pointer16.png'), "Select 'Esc'")
-        # self.add_circle_menuitem = self.menu.addAction(QtGui.QIcon('share:circle16.png'), 'Add Circle')
-        # self.add_arc_menuitem = self.menu.addAction(QtGui.QIcon('share:arc16.png'), 'Add Arc')
-        # self.add_rectangle_menuitem = self.menu.addAction(QtGui.QIcon('share:rectangle16.png'), 'Add Rectangle')
-        # self.add_polygon_menuitem = self.menu.addAction(QtGui.QIcon('share:polygon16.png'), 'Add Polygon')
-        # self.add_path_menuitem = self.menu.addAction(QtGui.QIcon('share:path16.png'), 'Add Path')
-        self.union_menuitem = self.menu.addAction(QtGui.QIcon('share/union16.png'), 'Polygon Union')
-        self.intersection_menuitem = self.menu.addAction(QtGui.QIcon('share/intersection16.png'), 'Polygon Intersection')
-        # self.subtract_menuitem = self.menu.addAction(QtGui.QIcon('share:subtract16.png'), 'Polygon Subtraction')
-        self.cutpath_menuitem = self.menu.addAction(QtGui.QIcon('share/cutpath16.png'), 'Cut Path')
+        # self.select_menuitem = self.menu.addAction(QIcon('share:pointer16.png'), "Select 'Esc'")
+        # self.add_circle_menuitem = self.menu.addAction(QIcon('share:circle16.png'), 'Add Circle')
+        # self.add_arc_menuitem = self.menu.addAction(QIcon('share:arc16.png'), 'Add Arc')
+        # self.add_rectangle_menuitem = self.menu.addAction(QIcon('share:rectangle16.png'), 'Add Rectangle')
+        # self.add_polygon_menuitem = self.menu.addAction(QIcon('share:polygon16.png'), 'Add Polygon')
+        # self.add_path_menuitem = self.menu.addAction(QIcon('share:path16.png'), 'Add Path')
+        self.union_menuitem = self.menu.addAction(QIcon('share/union16.png'), 'Polygon Union')
+        self.intersection_menuitem = self.menu.addAction(QIcon('share/intersection16.png'), 'Polygon Intersection')
+        # self.subtract_menuitem = self.menu.addAction(QIcon('share:subtract16.png'), 'Polygon Subtraction')
+        self.cutpath_menuitem = self.menu.addAction(QIcon('share/cutpath16.png'), 'Cut Path')
         # Add Separator
         self.menu.addSeparator()
-        # self.move_menuitem = self.menu.addAction(QtGui.QIcon('share:move16.png'), "Move Objects 'm'")
-        # self.copy_menuitem = self.menu.addAction(QtGui.QIcon('share:copy16.png'), "Copy Objects 'c'")
-        self.delete_menuitem = self.menu.addAction(QtGui.QIcon('share/deleteshape16.png'), "Delete Shape '-'")
-        self.buffer_menuitem = self.menu.addAction(QtGui.QIcon('share/buffer16.png'), "Buffer selection 'b'")
-        self.paint_menuitem = self.menu.addAction(QtGui.QIcon('share/paint16.png'), "Paint selection")
+        # self.move_menuitem = self.menu.addAction(QIcon('share:move16.png'), "Move Objects 'm'")
+        # self.copy_menuitem = self.menu.addAction(QIcon('share:copy16.png'), "Copy Objects 'c'")
+        self.delete_menuitem = self.menu.addAction(QIcon('share/deleteshape16.png'), "Delete Shape '-'")
+        self.buffer_menuitem = self.menu.addAction(QIcon('share/buffer16.png'), "Buffer selection 'b'")
+        self.paint_menuitem = self.menu.addAction(QIcon('share/paint16.png'), "Paint selection")
         self.menu.addSeparator()
 
         self.paint_menuitem.triggered.connect(self.on_paint_tool)
@@ -856,11 +859,11 @@ class FlatCAMDraw(QtCore.QObject):
         def entry2option(option, entry):
             self.options[option] = float(entry.text())
 
-        self.grid_gap_x_entry.setValidator(QtGui.QDoubleValidator())
+        self.grid_gap_x_entry.setValidator(QDoubleValidator())
         self.grid_gap_x_entry.editingFinished.connect(lambda: entry2option("snap-x", self.grid_gap_x_entry))
-        self.grid_gap_y_entry.setValidator(QtGui.QDoubleValidator())
+        self.grid_gap_y_entry.setValidator(QDoubleValidator())
         self.grid_gap_y_entry.editingFinished.connect(lambda: entry2option("snap-y", self.grid_gap_y_entry))
-        self.snap_max_dist_entry.setValidator(QtGui.QDoubleValidator())
+        self.snap_max_dist_entry.setValidator(QDoubleValidator())
         self.snap_max_dist_entry.editingFinished.connect(lambda: entry2option("snap_max", self.snap_max_dist_entry))
 
     def activate(self):

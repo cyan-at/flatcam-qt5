@@ -4,11 +4,17 @@ Shows intput and output text. Allows to enter commands. Supports history.
 """
 
 import html
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QColor, QKeySequence, QLineEdit, QPalette, \
-                        QSizePolicy, QTextCursor, QTextEdit, \
+from PyQt5.QtCore import pyqtSignal, Qt
+
+from PyQt5.QtGui import QColor, QKeySequence, QPalette, QTextCursor
+
+from PyQt5.QtWidgets import QLineEdit, \
+                        QSizePolicy, QTextEdit, \
                         QVBoxLayout, QWidget
 
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 class _ExpandableTextEdit(QTextEdit):
     """

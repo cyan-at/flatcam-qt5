@@ -9,22 +9,26 @@
 from FlatCAMObj import *
 import inspect  # TODO: Remove
 import FlatCAMApp
-from PyQt4 import Qt, QtGui, QtCore
+from PyQt5 import Qt, QtGui, QtCore
+
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 
-class KeySensitiveListView(QtGui.QListView):
+class KeySensitiveListView(QListView):
     """
-    QtGui.QListView extended to emit a signal on key press.
+    QListView extended to emit a signal on key press.
     """
 
-    keyPressed = QtCore.pyqtSignal(int)
+    keyPressed = pyqtSignal(int)
 
     def keyPressEvent(self, event):
         super(KeySensitiveListView, self).keyPressEvent(event)
         self.keyPressed.emit(event.key())
 
 
-#class ObjectCollection(QtCore.QAbstractListModel):
+#class ObjectCollection(QAbstractListModel):
 class ObjectCollection():
     """
     Object storage and management.
@@ -45,12 +49,12 @@ class ObjectCollection():
     }
 
     def __init__(self, parent=None):
-        #QtCore.QAbstractListModel.__init__(self, parent=parent)
+        #QAbstractListModel.__init__(self, parent=parent)
 
         ### Icons for the list view
         self.icons = {}
         for kind in ObjectCollection.icon_files:
-            self.icons[kind] = QtGui.QPixmap(ObjectCollection.icon_files[kind])
+            self.icons[kind] = QPixmap(ObjectCollection.icon_files[kind])
 
         ### Data ###
         self.object_list = []
@@ -64,10 +68,10 @@ class ObjectCollection():
         self.promises = set()
 
         ### View
-        #self.view = QtGui.QListView()
+        #self.view = QListView()
         self.view = KeySensitiveListView()
-        self.view.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)
-        self.model = QtGui.QStandardItemModel(self.view)
+        self.view.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.model = QStandardItemModel(self.view)
         self.view.setModel(self.model)
         self.model.itemChanged.connect(self.on_item_changed)
 
@@ -89,13 +93,13 @@ class ObjectCollection():
     def on_key(self, key):
 
         # Delete
-        if key == QtCore.Qt.Key_Delete:
+        if key == Qt.Key_Delete:
             # Delete via the application to
             # ensure cleanup of the GUI
             self.get_active().app.on_delete()
             return
 
-        if key == QtCore.Qt.Key_Space:
+        if key == Qt.Key_Space:
             self.get_active().ui.plot_cb.toggle()
             return
 
@@ -107,17 +111,17 @@ class ObjectCollection():
         FlatCAMApp.App.log.debug("Mouse button pressed on list")
         #self.print_list()
 
-    def rowCount(self, parent=QtCore.QModelIndex(), *args, **kwargs):
+    def rowCount(self, parent=QModelIndex(), *args, **kwargs):
         return len(self.object_list)
 
     def columnCount(self, *args, **kwargs):
         return 1
 
-    def data(self, index, role=Qt.Qt.DisplayRole):
+    def data(self, index, role=Qt.DisplayRole):
         if not index.isValid() or not 0 <= index.row() < self.rowCount():
-            return QtCore.QVariant()
+            return QVariant()
         row = index.row()
-        if role == Qt.Qt.DisplayRole:
+        if role == Qt.DisplayRole:
             return self.object_list[row].options["name"]
         if role == Qt.Qt.DecorationRole:
             return self.icons[self.object_list[row].kind]
@@ -155,14 +159,14 @@ class ObjectCollection():
         obj.set_ui(obj.ui_type())
 
         # Required before appending (Qt MVC)
-        #self.beginInsertRows(QtCore.QModelIndex(), len(self.object_list), len(self.object_list))
+        #self.beginInsertRows(QModelIndex(), len(self.object_list), len(self.object_list))
 
         # Simply append to the python list
         self.object_list.append(obj)
 
         # Create the model item to insert into the QListView
-        icon = QtGui.QIcon(self.icons[obj.kind])#self.icons["gerber"])
-        item = QtGui.QStandardItem(icon, str(name))
+        icon = QIcon(self.icons[obj.kind])#self.icons["gerber"])
+        item = QStandardItem(icon, str(name))
         # Item is not editable, so that double click
         # does not allow cell value modification.
         item.setEditable(False)
@@ -257,7 +261,7 @@ class ObjectCollection():
             return
         row = selections[0].row()
 
-        #self.beginRemoveRows(QtCore.QModelIndex(), row, row)
+        #self.beginRemoveRows(QModelIndex(), row, row)
 
         self.object_list.pop(row)
         self.model.removeRow(row)
@@ -293,7 +297,7 @@ class ObjectCollection():
         :return: None
         """
         iobj = self.model.createIndex(self.get_names().index(name), 0)  # Column 0
-        self.view.selectionModel().select(iobj, QtGui.QItemSelectionModel.Select)
+        self.view.selectionModel().select(iobj, QItemSelectionModel.Select)
 
     def set_inactive(self, name):
         """
@@ -304,7 +308,7 @@ class ObjectCollection():
         :return: None
         """
         iobj = self.model.createIndex(self.get_names().index(name), 0)  # Column 0
-        self.view.selectionModel().select(iobj, QtGui.QItemSelectionModel.Deselect)
+        self.view.selectionModel().select(iobj, QItemSelectionModel.Deselect)
 
     def set_all_inactive(self):
         """
@@ -329,10 +333,10 @@ class ObjectCollection():
 
     def on_item_changed(self, item):
         FlatCAMApp.App.log.debug("on_item_changed(): " + str(item.row()) + " " + self.object_list[item.row()].options["name"])
-        if item.checkState() == QtCore.Qt.Checked:
-           self.object_list[item.row()].options["plot"] = True #(item.checkState() == QtCore.Qt.Checked)
+        if item.checkState() == Qt.Checked:
+           self.object_list[item.row()].options["plot"] = True #(item.checkState() == Qt.Checked)
         else:
-           self.object_list[item.row()].options["plot"] = False #(item.checkState() == QtCore.Qt.Checked)
+           self.object_list[item.row()].options["plot"] = False #(item.checkState() == Qt.Checked)
 
         self.object_list[item.row()].plot()
         return
