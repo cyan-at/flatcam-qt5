@@ -402,7 +402,7 @@ class TclCommandSignaled(TclCommand):
                 # every TclCommandNewObject ancestor  support  timeout as parameter,
                 # but it does not mean anything for child itself
                 # when operation  will be  really long is good  to set it higher then defqault 30s
-                self.app.worker_task.emit({'fcn': self.execute_call, 'params': [args, unnamed_args]})
+                self.app.worker_task.emit({'fcn': self.execute_call, 'params': [args, unnamed_args], 'worker_name' : 'worker2'})
 
             return self.output
 

@@ -936,7 +936,7 @@ class FlatCAMExcellon(FlatCAMObj, Excellon):
         self.app.collection.promise(outname)
 
         # Send to worker
-        self.app.worker_task.emit({'fcn': geo_thread, 'params': [self.app]})
+        self.app.worker_task.emit({'fcn': geo_thread, 'params': [self.app], 'worker_name' : 'worker2'})
 
         return True, ""
 
@@ -996,7 +996,7 @@ class FlatCAMExcellon(FlatCAMObj, Excellon):
 
         # Send to worker
         # self.app.worker.add_task(job_thread, [self.app])
-        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app]})
+        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app], 'worker_name' : 'worker2'})
 
     def on_plot_cb_click(self, *args):
         if self.muted_ui:
@@ -1426,7 +1426,7 @@ class FlatCAMGeometry(FlatCAMObj, Geometry):
         self.app.collection.promise(name)
 
         # Background
-        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app]})
+        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app], 'worker_name' : 'worker2'})
 
     def paint_poly_all(self, tooldia, overlap, outname=None,
                        connect=True, contour=True):
@@ -1513,7 +1513,7 @@ class FlatCAMGeometry(FlatCAMObj, Geometry):
         self.app.collection.promise(name)
 
         # Background
-        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app]})
+        self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app], 'worker_name' : 'worker2'})
 
     def on_generatecnc_button_click(self, *args):
         self.app.report_usage("geometry_on_generatecnc_button")
@@ -1602,7 +1602,7 @@ class FlatCAMGeometry(FlatCAMObj, Geometry):
             self.app.collection.promise(outname)
 
             # Send to worker
-            self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app]})
+            self.app.worker_task.emit({'fcn': job_thread, 'params': [self.app], 'worker_name' : 'worker2'})
         else:
             self.app.new_object("cncjob", outname, job_init)
 

@@ -1804,7 +1804,8 @@ class App(QtCore.QObject):
             self.inform.emit("Open cancelled.")
         else:
             self.worker_task.emit({'fcn': self.open_gcode,
-                                   'params': [filename]})
+                                   'params': [filename],
+                                   'worker_name' : 'worker2'})
 
     def on_file_openproject(self):
         """
@@ -1870,10 +1871,10 @@ class App(QtCore.QObject):
         name = self.collection.get_active().options["name"]
 
         try:
-            filename = QFileDialog.getSaveFileName(caption="Export SVG",
+            filename, _ = QFileDialog.getSaveFileName(caption="Export SVG",
                                                          directory=self.get_last_folder(), filter="*.svg")
         except TypeError:
-            filename = QFileDialog.getSaveFileName(caption="Export SVG")
+            filename, _ = QFileDialog.getSaveFileName(caption="Export SVG")
 
         filename = str(filename)
 
@@ -1904,7 +1905,8 @@ class App(QtCore.QObject):
             self.inform.emit("Open cancelled.")
         else:
             self.worker_task.emit({'fcn': self.import_svg,
-                                   'params': [filename]})
+                                   'params': [filename],
+                                   'worker_name' : 'worker2'})
 
     def on_file_saveproject(self):
         """
@@ -1936,10 +1938,10 @@ class App(QtCore.QObject):
         self.report_usage("on_file_saveprojectas")
 
         try:
-            filename = QFileDialog.getSaveFileName(caption="Save Project As ...",
+            filename, _ = QFileDialog.getSaveFileName(caption="Save Project As ...",
                                                          directory=self.get_last_folder())
         except TypeError:
-            filename = QFileDialog.getSaveFileName(caption="Save Project As ...")
+            filename, _ = QFileDialog.getSaveFileName(caption="Save Project As ...")
 
         filename = str(filename)
 
@@ -2374,7 +2376,11 @@ class App(QtCore.QObject):
 
         # Send to worker
         #self.worker.add_task(worker_task, [self])
-        self.worker_task.emit({'fcn': worker_task, 'params': [self]})
+        self.worker_task.emit({
+            'fcn': worker_task,
+            'params': [self],
+            'worker_name' : 'worker2'
+        })
 
     def register_folder(self, filename):
         self.defaults["last_folder"] = os.path.split(str(filename))[0]
@@ -4210,8 +4216,8 @@ class App(QtCore.QObject):
 
         openers = {
             'gerber': lambda fname: self.worker_task.emit({'fcn': self.open_gerber, 'params': [fname], 'worker_name' : 'worker2'}),
-            'excellon': lambda fname: self.worker_task.emit({'fcn': self.open_excellon, 'params': [fname]}),
-            'cncjob': lambda fname: self.worker_task.emit({'fcn': self.open_gcode, 'params': [fname]}),
+            'excellon': lambda fname: self.worker_task.emit({'fcn': self.open_excellon, 'params': [fname], 'worker_name' : 'worker2'}),
+            'cncjob': lambda fname: self.worker_task.emit({'fcn': self.open_gcode, 'params': [fname], 'worker_name' : 'worker2'}),
             'project': self.open_project,
             'svg': self.import_svg
         }
@@ -4354,7 +4360,7 @@ class App(QtCore.QObject):
 
         # Send to worker
         # self.worker.add_task(worker_task, [self])
-        self.worker_task.emit({'fcn': worker_task, 'params': [self]})
+        self.worker_task.emit({'fcn': worker_task, 'params': [self], 'worker_name' : 'worker2'})
 
     def save_project(self, filename):
         """
