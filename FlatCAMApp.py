@@ -521,6 +521,10 @@ class App(QtCore.QObject):
         ## Standard signals
         # Menu
         self.ui.menufilenew.triggered.connect(self.on_file_new)
+
+        self.ui.menufileopenmultiple.triggered.connect(self.on_file_multiple)
+        self.ui.menufileopeneasyeda.triggered.connect(self.on_easyeda)
+
         self.ui.menufileopengerber.triggered.connect(self.on_fileopengerber)
         self.ui.menufileopenexcellon.triggered.connect(self.on_fileopenexcellon)
         self.ui.menufileopengcode.triggered.connect(self.on_fileopengcode)
@@ -1720,6 +1724,42 @@ class App(QtCore.QObject):
         # Re-fresh project options
         self.on_options_app2project()
 
+    def on_file_multiple(self):
+        """
+        File menu callback for opening a Gerber.
+
+        :return: None
+        """
+
+        self.report_usage("on_file_multiple")
+        App.log.debug("on_file_multiple()")
+
+        try:
+            filenames, _ = QFileDialog.getOpenFileNames(
+                caption="Open Files",
+                directory=self.get_last_folder())
+        except TypeError:
+            filenames, _ = QFileDialog.getOpenFileName(caption="Open Files")
+
+        # # The Qt methods above will return a QString which can cause problems later.
+        # # So far json.dump() will fail to serialize it.
+        # # TODO: Improve the serialization methods and remove this fix.
+
+        for filename in filenames:
+            filename = str(filename)
+
+            if filename[-4:].lower() == ".drl":
+                self.worker_task.emit({'fcn': self.open_excellon,
+                                       'params': [filename],
+                                       'worker_name' : 'worker2'})
+            elif filename[-4:].lower() in [".gko", ".gtl"]:
+                self.worker_task.emit({'fcn': self.open_gerber,
+                                       'params': [filename],
+                                       'worker_name' : 'worker2'})
+
+    def on_easyeda(self):
+        pass
+
     def on_fileopengerber(self):
         """
         File menu callback for opening a Gerber.
@@ -1731,7 +1771,7 @@ class App(QtCore.QObject):
         App.log.debug("on_fileopengerber()")
 
         try:
-            filename, _ = QFileDialog.getOpenFileName(caption="Open Gerber",
+            filename, _ = QFileDialog.getOpenFileNames(caption="Open Gerber",
                                                          directory=self.get_last_folder())
         except TypeError:
             filename, _ = QFileDialog.getOpenFileName(caption="Open Gerber")
@@ -1740,7 +1780,7 @@ class App(QtCore.QObject):
         # So far json.dump() will fail to serialize it.
         # TODO: Improve the serialization methods and remove this fix.
 
-        # import ipdb; ipdb.set_trace();
+        import ipdb; ipdb.set_trace();
 
         filename = str(filename)
 

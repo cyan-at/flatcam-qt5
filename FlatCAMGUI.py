@@ -44,6 +44,14 @@ class FlatCAMGUI(QMainWindow):
         # Separator
         self.menufile.addSeparator()
 
+        self.menufileopenmultiple = QAction(QIcon('share/folder16.png'), 'Open &Multiple ...', self)
+        self.menufile.addAction(self.menufileopenmultiple)
+
+        self.menufileopeneasyeda = QAction(QIcon('share/folder16.png'), 'EasyEDA ...', self)
+        self.menufile.addAction(self.menufileopeneasyeda)
+
+        self.menufile.addSeparator()
+
         # Open gerber ...
         self.menufileopengerber = QAction(QIcon('share/folder16.png'), 'Open &Gerber ...', self)
         self.menufile.addAction(self.menufileopengerber)
