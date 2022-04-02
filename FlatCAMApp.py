@@ -1762,10 +1762,10 @@ class App(QtCore.QObject):
         App.log.debug("on_fileopenexcellon()")
 
         try:
-            filename = QFileDialog.getOpenFileName(caption="Open Excellon",
+            filename, _ = QFileDialog.getOpenFileName(caption="Open Excellon",
                                                          directory=self.get_last_folder())
         except TypeError:
-            filename = QFileDialog.getOpenFileName(caption="Open Excellon")
+            filename, _ = QFileDialog.getOpenFileName(caption="Open Excellon")
 
         # The Qt methods above will return a QString which can cause problems later.
         # So far json.dump() will fail to serialize it.
@@ -1776,7 +1776,8 @@ class App(QtCore.QObject):
             self.inform.emit("Open cancelled.")
         else:
             self.worker_task.emit({'fcn': self.open_excellon,
-                                   'params': [filename]})
+                                   'params': [filename],
+                                   'worker_name' : 'worker2'})
 
     def on_fileopengcode(self):
         """
