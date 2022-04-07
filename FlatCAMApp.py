@@ -1780,8 +1780,6 @@ class App(QtCore.QObject):
         # So far json.dump() will fail to serialize it.
         # TODO: Improve the serialization methods and remove this fix.
 
-        import ipdb; ipdb.set_trace();
-
         filename = str(filename)
 
         if filename == "":
